@@ -1,7 +1,4 @@
-import json
-import os
-import time
-import random
+from src import json, random, os, time
 
 fingers = ['thumb', 'index finger', 'middle finger', 'ring finger', 'little finger']
 time_to_collect = 10

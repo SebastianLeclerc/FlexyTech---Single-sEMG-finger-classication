@@ -1,7 +1,4 @@
-from src.data_processing import preprocess_data
-from src.feature_extraction import extract_features
-from src.model_training import train_model
-from src.model_evaluation import evaluate_model
+from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time
 
 data_file_path = ''
 processed_data = preprocess_data(data_file_path)
@@ -13,9 +10,10 @@ trained_models = {}
 for model in models:
     trained_models[model] = train_model(model)
 
-eveluated_models = {}
 for model, trained_model in trained_models.items():
-    eveluated_models[model] = evaluate_model(model, trained_model)
+    best_model = evaluate_model(model, trained_model)
 
-model_file_path = ''
-# To Do: save the best model
+model_filename = f"{best_model}_{time.strftime('%Y-%m-%d')}.pkl"
+model_file_path = os.path.join("../models", model_filename)
+with open(model_file_path, 'wb') as f:
+    pickle.dump(best_model, f)
