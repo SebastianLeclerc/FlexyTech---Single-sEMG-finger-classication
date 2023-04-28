@@ -1,0 +1,23 @@
+Here is a short explanation of our folders and files:
+
+README.md:
+A file that provides a brief overview of the project and how to use it.
+
+data/:
+A folder that contains all the data files used in the project.
+
+models/:
+A folder that contains all the trained models.
+
+src/:
+A folder that contains all the Python code for the project.
+It includes modules for data processing, feature extraction, model training, model evaluation as well as a main.py file that ties everything together.
+main.py is the entry point to the project. It imports the necessary modules from src/ and uses them to train and evaluate the models.
+
+requirements.txt:
+A file that lists all the Python packages required to run the project.
+-> will be added in the end pip freeze > requirements.txt
+
+setup.py:
+A file that contains the project metadata and package installation instructions.
+-> is this necessary?

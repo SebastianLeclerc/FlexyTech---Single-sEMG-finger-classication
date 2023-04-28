@@ -26,10 +26,10 @@ for finger in fingers:
 
 data = {"fingers": finger_data}
 filename = f"{participant_name}_{time.strftime('%Y-%m-%d')}.json"
-if not os.path.exists("Data"):
-    os.makedirs("Data")
-file_path = os.path.join("Data", filename)
+if not os.path.exists("../data"):
+    os.makedirs("../data")
+file_path = os.path.join("../data", filename)
 with open(file_path, 'w') as f:
     json.dump(data, f)
 
-print(f"Data collection completed. Thank you, {participant_name}!")
+print(f"data collection completed. Thank you, {participant_name}!")
