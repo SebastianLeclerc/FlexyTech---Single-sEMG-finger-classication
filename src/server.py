@@ -2,45 +2,94 @@
 
 import socket
 import datetime
+import json
+import threading
+import keyboard
 from time import sleep
 from datetime import datetime
 
-#Set IP and Port of Actuator node receiving temperature
-ip      = "192.168.7.1"
-port    = 8080
+# Set IP and Port 
+ip = "192.168.7.1"
+port = 8080
 listeningAddress = (ip, port)
 
-dataCount = 0
-timeBefore = 0
+filename = "sensorData.json"
 
-dataComplete = []
-dataSecond = [0 for i in range(1000)]
-filename = "sensorData.txt"
-
-#Make datagram socket using IPv4 addressing scheme and bind it 
+# Make datagram socket
 datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 datagramSocket.bind(listeningAddress)
 
-#Liten to incoming messages, print  them and send response
-while(dataCount != 1000):
-    emgVal,_ = datagramSocket.recvfrom(128)
-    emgVal = float(emgVal.decode())
-    
-    #For time stamps
-    if dataCount == 1:
-        timeBefore = datetime.now()
-    dataSecond.append(emgVal)
-    
-    dataCount += 1
-    if dataCount == 1000:
-        dataComplete.append(dataSecond)
+# Initialize data variables
+dataComplete = []
 
-timeAfter = datetime.now() - timeBefore #comparing time before / after
-ms = timeAfter.total_seconds() * 1000 #in ms
+def receive_data():
+    global  dataComplete
+    while True:
+        emgVal,_ = datagramSocket.recvfrom(128)
+        emgVal = float(emgVal.decode())
+        dataComplete.append(emgVal)
 
-print("We received " + str(dataCount) + "samples")
+def save_data(label):
+    global dataComplete
+    data_to_save = {'label': label, 'data': dataComplete}
+    with open(filename, 'w') as f:  # dumping to a file
+        json.dump(data_to_save, f)
+    print('Data saved with label:', label)
+    dataComplete.clear()
 
-print("It took " + str(ms) + "ms")
+if __name__ == '__main__':
+    # Start receiving data in a separate thread
+    receive_thread = threading.Thread(target=receive_data)
+    receive_thread.start()
 
-with open(filename, 'w') as f: #dumping to a file
-    f.write(str(dataComplete))
+    # saves data as long as a key is held
+    # 1 thumb 2 index 3 middle 4 ring 5 pinky
+    while True:
+        if keyboard.is_pressed('numpad 1'):# thumb
+            # Wait for the key to be released
+            dataComplete.clear() # clearing data before saving into it
+            sleep(0.01) # waiting for 10 miliseconds 
+            while keyboard.is_pressed('numpad 1'): 
+                pass
+            save_data('1')
+
+        elif keyboard.is_pressed('numpad 2'): # index
+            # Wait for the key to be released
+            dataComplete.clear() # clearing data before saving into it
+            sleep(0.01) # waiting for 10 miliseconds 
+            # Wait for the key to be released
+            while keyboard.is_pressed('numpad 2'):
+                pass
+            save_data('2')
+
+        elif keyboard.is_pressed('numpad 3'): # middle
+
+            # Wait for the key to be released
+            dataComplete.clear() # clearing data before saving into it
+            sleep(0.01) # waiting for 10 miliseconds 
+            while keyboard.is_pressed('numpad 3'):
+                pass
+            save_data('3')
+        elif keyboard.is_pressed('numpad 4'): # ring
+
+            # Wait for the key to be released
+            dataComplete.clear() # clearing data before saving into it
+            sleep(0.01) # waiting for 10 miliseconds 
+            while keyboard.is_pressed('numpad 4'):
+                pass
+            save_data('4')
+        elif keyboard.is_pressed('numpad 5'): # pinky
+
+            # Wait for the key to be released
+            dataComplete.clear() # clearing data before saving into it
+            sleep(0.01) # waiting for 10 miliseconds 
+            while keyboard.is_pressed('numpad 5'):
+                pass
+            save_data('5')
+        
+
+    # Join the receive thread
+    receive_thread.join()
+
+    # Print the time taken to receive data
+    print("We received " + str(dataCount) + " samples")
