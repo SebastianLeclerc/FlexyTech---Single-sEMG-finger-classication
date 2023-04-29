@@ -1,49 +1,57 @@
 #!/usr/bin/python
 
-import socket
-from time import sleep
-from datetime import datetime
-
+### using multithreading 
+'''
+in this code the sensor data is read and saved in the memory where it is continuously updated.
+the sensor thread continuosly enqueue the sensor reading at 1Khz sampling frequency, and the send thread will send the data
+to the computer/laptop.
+it doesn't matter how fast we recieve the data as long as we measure it at the right frequency.
+'''
+import queue
+import socket 
+import threading 
+import mmap
 import os
 
-#import Adafruit_BBIO.ADC as ADC
-# # Set up ADC
-# ADC.setup()
-
-#Server address:port var
+# Server address:port var
 serverAddress = ("192.168.7.1", 8080)
 
-#Create a datagram socket
+# Create a datagram socket
 tempSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-pin = "0"
-sensor='/sys/bus/iio/devices/iio:device0/in_voltage{}_raw'.format(pin)
 
-data = []
-dataCount = 0
-f = open(sensor, "r")
-timeBefore = datetime.now()
-
-while True:
-    f.seek(0) #Init cursor to start of file
-
-    #analog_value = float(f.read()[:-1]) # Read analog value
-    #tempStr = str(analog_value)
-    analog_value = f.read()[:-1] #test
-    #analog_value = os.system('cat /sys/bus/iio/devices/iio:device0/in_voltage0_raw &> /dev/null')
-    data.append(analog_value)
-    #tempSensorSocket.sendto(tempStr.encode(), serverAddress) #send encoded data
-    #response = tempSensorSocket.recv(1024)
-    dataCount += 1
-    sleep(0.001) #1 ms, 1s = 1000 ms
-    if dataCount == 1000:
-        break
-
-timeAfter = datetime.now() - timeBefore
-
-ms = timeAfter.total_seconds() * 1000
-
-#we get 100 000 data samples in the 10 s period (right now)
-
-print(ms)
-#print(datetime.strptime((timeAfter - timeBefore), "%S"))
-f.close()
+# Open the sensor file in read-only mode using a memory-mapped file
+pin = 0
+with open(f"/sys/bus/iio/devices/iio:device0/in_voltage{pin}_raw", "r") as f:
+    with mmap.mmap(f.fileno(), 0, prot=mmap.PROT_READ) as mm:
+        
+        # Define a function that reads the sensor data
+        def read_sensor_data():
+            while True:
+                # Read the sensor data from the memory-mapped file
+                mm.seek(0)
+                data = mm.readline().strip()
+                
+                # Add the data to a queue to be sent over the socket
+                data_queue.put(data)
+                
+        # Define a function that sends the sensor data over the socket
+        def send_sensor_data():
+            while True:
+                # Wait for data to be added to the queue
+                data = data_queue.get()
+                
+                # Send the data over the socket
+                tempSensorSocket.sendto(data, serverAddress)
+        
+        # Create a queue to hold the sensor data
+        data_queue = queue.Queue()
+        
+        # Create a thread to read the sensor data
+        sensor_thread = threading.Thread(target=read_sensor_data)
+        
+        # Create a thread to send the sensor data
+        send_thread = threading.Thread(target=send_sensor_data)
+        
+        # Start the threads
+        sensor_thread.start()
+        send_thread.start()
