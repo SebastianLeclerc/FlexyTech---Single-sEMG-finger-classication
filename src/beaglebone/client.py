@@ -29,44 +29,44 @@ def read_sensor_data():
         try:
             f.seek(0)
             data = f.read().strip()
-            data_queue.put(data+','+str(time()))
-            sleep(0.0005) #Play around with this value!
+            clientSensorSocket.sendto(data.encode(), serverAddress)
+            sleep(0.001) #Play around with this value!
         
         except KeyboardInterrupt:
             break
         
-        
+read_sensor_data()      
         
 # Send sensor data to server from queue
-def send_sensor_data():
-    while(True):
-        try:
+# def send_sensor_data():
+#     while(True):
+#         try:
             
-            data = data_queue.get()
-            clientSensorSocket.sendto(data.encode(), serverAddress)
-            
-        except KeyboardInterrupt:
-            break
+#             data = data_queue.get()
+#             clientSensorSocket.sendto(data.encode(), serverAddress)
+#             #sleep(0.0005) #Play around with this value!
+#         except KeyboardInterrupt:
+#             break
 
         
     #dataIn,_ = clientSensorSocket.recvfrom(128)#128
 
       
 # Create a queue to hold the sensor data
-data_queue = queue.Queue()
+# data_queue = queue.Queue()
 
-# Create a thread to read the sensor data
-sensor_thread = threading.Thread(target=read_sensor_data)
-send_thread = threading.Thread(target=send_sensor_data)
+# # Create a thread to read the sensor data
+# sensor_thread = threading.Thread(target=read_sensor_data)
+# send_thread = threading.Thread(target=send_sensor_data)
 
-# Start the threads
-send_thread.start()
-sensor_thread.start()
+# # Start the threads
+# send_thread.start()
+# sensor_thread.start()
 
-while(True):
-    try:
-        pass
-    except KeyboardInterrupt:
-        clientSensorSocket.close() #Close socket
-        print("Interrupt!")
+# while(True):
+#     try:
+#         pass
+#     except KeyboardInterrupt:
+#         clientSensorSocket.close() #Close socket
+#         print("Interrupt!")
         
