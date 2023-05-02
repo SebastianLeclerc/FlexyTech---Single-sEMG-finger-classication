@@ -72,9 +72,7 @@ def listen_keyboard():
         save_json('5')
 
 
-def plotting(path):        
-    # This is just a test implementation.
-    # We could adapt it to generate plots for all JSON files in the directory ?
+def plotting(path):
     df = pd.read_json(path)
 
     label = df['label'][0]
