@@ -27,19 +27,21 @@ name = input("Enter subject name: ")
 #Save data in JSON with labels
 def save_json(label):
     global dataComplete
-    filename = str(name) + str(label) + "data.json" #Will save each finger in separate files, check if this can be improved
+    filename = '../data/'+str(name) + str(label) + "data.json" #Will save each finger in separate files, check if this can be improved
     data_to_save = {'label': label, 'data': dataComplete,'time':time_stamp}
     with open(filename, 'w') as f:
         json.dump(data_to_save, f, indent = 4)
+    plotting(filename)
     print('Data saved with label:', label, "length: ", len(dataComplete))
     dataComplete.clear()
+    time_stamp.clear()
 
 #Receive new data to append
 def receive_data():
-    data,_ = datagramSocket.recvfrom(128)
-    emgVal,times = data.decode().split(',')
-    dataComplete.append(float(emgVal))
-    time_stamp.append(times)
+    emgVal,_ = datagramSocket.recvfrom(128)
+    emgVal = float(emgVal.decode())
+    dataComplete.append(emgVal)
+    time_stamp.append(time.time())
     
 #Listen to keyboard press
 def listen_keyboard():
@@ -70,24 +72,22 @@ def listen_keyboard():
         save_json('5')
 
 
-def plotting():        
-    plt.ion()
+def plotting(path):        
+    # This is just a test implementation.
+    # We could adapt it to generate plots for all JSON files in the directory ?
+    df = pd.read_json(path)
+
+    label = df['label'][0]
+    x = df['data']
+    time = df['time']
+
     fig, ax = plt.subplots()
-    line, = ax.plot([], [])
-
-    xdata, ydata = [], []
-    while True:
-        data = dataComplete[-1]
-        xdata.append(time.time())
-        ydata.append(data)
-        line.set_xdata(xdata)
-        line.set_ydata(ydata)
-        ax.relim()
-        ax.autoscale_view()
-        fig.canvas.draw()
-        fig.canvas.flush_events()
-        time.sleep(1/1000)
-
+    ax.plot(time, x)
+    ax.set_title(label)
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Data')
+    ax.grid()
+    plt.savefig('../plots/'+path[:-4]+'png')
 
 print("Hold number key 1-5 to record data in JSON (\'ctrl+c\' to exit)")
 print("1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Little")
