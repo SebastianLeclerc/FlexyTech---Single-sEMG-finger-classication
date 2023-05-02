@@ -3,6 +3,12 @@
 import socket
 import json
 import keyboard
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import time
+import pandas as pd
+import numpy as np
+
 
 #Set IP and Port of listening server
 ip      = "192.168.7.1"
@@ -17,6 +23,14 @@ datagramSocket.bind(listeningAddress)
 
 name = input("Enter subject name: ")
 
+def save_and_plotting(path):
+    df = pd.read_json(path)
+    data = df.data.values
+    fig = plt.plot(data)
+    plt.savefig(path[:-4]+'png')
+
+
+
 #Save data in JSON with labels
 def save_data(label):
     global dataComplete
@@ -25,9 +39,9 @@ def save_data(label):
     with open(filename, 'w') as f:
         json.dump(data_to_save, f, indent = 4)
     print('Data saved with label:', label,"length: ",len(dataComplete))
+    save_and_plotting(filename)
     dataComplete.clear()
 
-    
 #Receive new data to append
 def receive_data():
     emgVal,_ = datagramSocket.recvfrom(128)
@@ -61,6 +75,26 @@ def listen_keyboard():
         while keyboard.is_pressed('5'): 
             receive_data()
         save_data('5')
+
+
+def plotting():        
+    plt.ion()
+    fig, ax = plt.subplots()
+    line, = ax.plot([], [])
+
+    xdata, ydata = [], []
+    while True:
+        data = dataComplete[-1]
+        xdata.append(time.time())
+        ydata.append(data)
+        line.set_xdata(xdata)
+        line.set_ydata(ydata)
+        ax.relim()
+        ax.autoscale_view()
+        fig.canvas.draw()
+        fig.canvas.flush_events()
+        time.sleep(1/1000)
+
 
 print("Hold number key 1-5 to record data in JSON (\'ctrl+c\' to exit)")
 print("1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Little")
