@@ -23,23 +23,14 @@ datagramSocket.bind(listeningAddress)
 
 name = input("Enter subject name: ")
 
-def save_and_plotting(path):
-    df = pd.read_json(path)
-    data = df.data.values
-    fig = plt.plot(data)
-    plt.savefig(path[:-4]+'png')
-
-
-
 #Save data in JSON with labels
-def save_data(label):
+def save_json(label):
     global dataComplete
     filename = str(name) + str(label) + "data.json" #Will save each finger in separate files, check if this can be improved
     data_to_save = {'label': label, 'data': dataComplete}
     with open(filename, 'w') as f:
         json.dump(data_to_save, f, indent = 4)
-    print('Data saved with label:', label,"length: ",len(dataComplete))
-    save_and_plotting(filename)
+    print('Data saved with label:', label, "length: ", len(dataComplete))
     dataComplete.clear()
 
 #Receive new data to append
@@ -54,27 +45,27 @@ def listen_keyboard():
         dataComplete.clear() #Clear data before saving
         while keyboard.is_pressed('1'): 
             receive_data()
-        save_data('1')
+        save_json('1')
     elif keyboard.is_pressed('2'): #Index
         dataComplete.clear()
         while keyboard.is_pressed('2'): 
             receive_data()
-        save_data('2')
+        save_json('2')
     elif keyboard.is_pressed('3'): #Middle
         dataComplete.clear()
         while keyboard.is_pressed('3'): 
             receive_data()
-        save_data('3')
+        save_json('3')
     elif keyboard.is_pressed('4'): #Ring
         dataComplete.clear()
         while keyboard.is_pressed('4'): 
             receive_data()
-        save_data('4')
+        save_json('4')
     elif keyboard.is_pressed('5'): #Little
         dataComplete.clear()
         while keyboard.is_pressed('5'): 
             receive_data()
-        save_data('5')
+        save_json('5')
 
 
 def plotting():        
