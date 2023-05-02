@@ -12,7 +12,7 @@ If this script is kept open - beaglebone needs to be shutdown due to some overfl
 import queue
 import socket 
 import threading
-from time import sleep
+from time import sleep,time
 
 # Set server address and create a datagram socket
 serverAddress = ("192.168.7.1", 8080)
@@ -25,16 +25,29 @@ f = open(file, "r")
 
 # Read sensor data from file and put in queue
 def read_sensor_data():
-    f.seek(0)
-    data = f.read().strip()
-    data_queue.put(data)
-    sleep(0.0005) #Play around with this value!
+    while(True):
+        try:
+            f.seek(0)
+            data = f.read().strip()
+            data_queue.put(data+','+str(time()))
+            sleep(0.0005) #Play around with this value!
+        
+        except KeyboardInterrupt:
+            break
+        
         
         
 # Send sensor data to server from queue
 def send_sensor_data():
-    data = data_queue.get()
-    clientSensorSocket.sendto(data.encode(), serverAddress)
+    while(True):
+        try:
+            
+            data = data_queue.get()
+            clientSensorSocket.sendto(data.encode(), serverAddress)
+            
+        except KeyboardInterrupt:
+            break
+
         
     #dataIn,_ = clientSensorSocket.recvfrom(128)#128
 
@@ -52,9 +65,8 @@ sensor_thread.start()
 
 while(True):
     try:
-        read_sensor_data()
-        send_sensor_data()
+        pass
     except KeyboardInterrupt:
         clientSensorSocket.close() #Close socket
         print("Interrupt!")
-        break
+        

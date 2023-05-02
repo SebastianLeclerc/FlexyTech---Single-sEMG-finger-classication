@@ -6,6 +6,7 @@ import keyboard
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import time
+import datetime
 import pandas as pd
 import numpy as np
 
@@ -16,7 +17,7 @@ port    = 8080
 listeningAddress = (ip, port)
 
 dataComplete = []
-
+time_stamp = []
 #Make datagram socket using IPv4 addressing scheme and bind it 
 datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 datagramSocket.bind(listeningAddress)
@@ -27,7 +28,7 @@ name = input("Enter subject name: ")
 def save_json(label):
     global dataComplete
     filename = str(name) + str(label) + "data.json" #Will save each finger in separate files, check if this can be improved
-    data_to_save = {'label': label, 'data': dataComplete}
+    data_to_save = {'label': label, 'data': dataComplete,'time':time_stamp}
     with open(filename, 'w') as f:
         json.dump(data_to_save, f, indent = 4)
     print('Data saved with label:', label, "length: ", len(dataComplete))
@@ -35,9 +36,10 @@ def save_json(label):
 
 #Receive new data to append
 def receive_data():
-    emgVal,_ = datagramSocket.recvfrom(128)
-    emgVal = float(emgVal.decode())
-    dataComplete.append(emgVal)
+    data,_ = datagramSocket.recvfrom(128)
+    emgVal,times = data.decode().split(',')
+    dataComplete.append(float(emgVal))
+    time_stamp.append(times)
     
 #Listen to keyboard press
 def listen_keyboard():
