@@ -1,37 +1,35 @@
 import math
 
 from src import np, pd
+
 def extract_features(data, overlap):
     """
     Extracts features from data and returns the fitted model object.
     :param data: data with signals
     :param overlap: overlaping space
     """
-
-    # Time domain features
-    features_names = ['Variance(VAR)', 'MeanAbsoluteValue(MAV)', 'RootMeanSquare(RMS)', 'WaveformLength(WL)', 'ZeroCrossings(ZC)']
+    # Work with numpy matrix
+    data_n = data.to_numpy()
+       
+    # Time domain features: Mean absolute value (MAV), root mean square (RMS), waveform length (WL),zero crossings (ZC), variance (VAR)
+    feature_names = ['Variance(VAR)', 'MeanAbsoluteValue(MAV)', 'RootMeanSquare(RMS)', 'WaveformLength(WL)']
     var = []
     mav = []
     rms = []
     wl = []
-    #zc = []
+    zc = []
 
     # Iterate for each signal/window and calculate associated features
-    for index in range(len(data)):
-        var.append(data.iloc[[index]].var(axis=1))
-        mav.append(sum(abs(data.iloc[[index]].var(axis=1)))/len(data.iloc[[index]]))
-        rms.append(math.sqrt((data.iloc[[index]].mean(axis=1))**2))
-        wl.append(sum(abs(data.iloc[[index]].diff(axis=1)))
-        #zc.append(data.iloc[[index]].mean(axis=1))
-    
-    var = np.array(var)
-    mav = np.array(mav)
-    rms = np.array(rms)
-    wl = np.array(wl)
-    #zc = np.array(zc)
-
-    matrix = np.column_stack((mav, rms, wl, zc))
-    df_features = pd.DataFrame(matrix, columns = features_names)
+    for x in range(len(data_n)):
+  
+        var.append(np.var(data_n[x]))
+        rms.append(np.sqrt(np.mean(data_n[x] ** 2)))
+        mav.append(np.sum(np.absolute(data_n[x])) / len(data_n[x]))
+        wl.append(np.sum(abs(np.diff(data_n[x]))))
+        #zc.append(zcruce(x, th))
+        
+    matrix = np.column_stack((var, mav, rms, wl))
+    df_features = pd.DataFrame(matrix, columns = feature_names)
     data = pd.concat([data, df_features], axis=1)
 
     return data
