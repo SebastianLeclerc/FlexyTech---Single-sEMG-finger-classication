@@ -1,16 +1,10 @@
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import mean_absolute_error
-from src import pd
+from src import pd, accuracy_score, precision_score, roc_auc_score, recall_score, f1_score, mean_absolute_error
 def evaluate_model(model, trained_model, df_test):
     """Evaluates a machine learning model and returns the evaluation metrics."""
 
     # Split features and classes
-    X_test = df.iloc[:, :-1]
-    y_test = df.iloc[:, -1:]
+    X_test = df_test.iloc[:, :-1]
+    y_test = df_test.iloc[:, -1:]
 
     # Metrics: 
     metrics = ['accuracy', 'precision', 'roc_auc', 'recall', 'f1_score', 'mean_absolute_error']
