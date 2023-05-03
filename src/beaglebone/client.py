@@ -17,6 +17,7 @@ from time import sleep,time
 # Set server address and create a datagram socket
 serverAddress = ("192.168.7.1", 8080)
 clientSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#count = 0 # For keeping track of packages
 
 # Analog input to read from file
 pin = 0
@@ -25,11 +26,13 @@ f = open(file, "r")
 
 # Read sensor data from file and put in queue
 def read_sensor_data():
+    #global count
     while(True):
         try:
             f.seek(0)
-            data = f.read().strip()
-            clientSensorSocket.sendto(data.encode(), serverAddress)
+            data = f.read().strip() #+ "," + str(count) # Last part for pkt counting
+            #count += 1
+            clientSensorSocket.sendto(data.encode(), serverAddress) #Sending string
             sleep(0.001) #Play around with this value!
         
         except KeyboardInterrupt:
