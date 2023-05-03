@@ -6,7 +6,7 @@ data,label,_= combine_data('./../data') # some tests.
 
 
 
-def extract_features(data,label,features_no,features_funcs,):
+def extract_features(data,label,features_no,frame_length = 512,*features_funcs,):
     """Extracts features from data and returns the fitted model object.
     create,recieves the processed and returns the labeled dataset for training the model.
     data : processed data np.array
@@ -23,7 +23,7 @@ def extract_features(data,label,features_no,features_funcs,):
         column_names.append(func.__name__)
         features[func.__name__] = []
         for samples in enumerate(data):
-            features[func.__name__].append(func(y = samples,hop_length=1+int((len(samples))/features_no))[0])
+            features[func.__name__].append(func(y = samples,frame_length = frame_length,hop_length=1+int((len(samples))/features_no))[0])
     features['labels'] = label
     df = pd.DataFrame(features)
     for func in column_names:
