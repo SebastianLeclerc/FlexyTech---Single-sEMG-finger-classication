@@ -3,7 +3,10 @@ from librosa.feature import zero_crossing_rate
 import numpy as np
 import pandas as pd
 data,label,_= combine_data('./../data') # some tests.
-def extract_features(data,label,features_no,*features_funcs,):
+
+
+
+def extract_features(data,label,features_no,features_funcs,):
     """Extracts features from data and returns the fitted model object.
     create,recieves the processed and returns the labeled dataset for training the model.
     data : processed data np.array
@@ -19,7 +22,7 @@ def extract_features(data,label,features_no,*features_funcs,):
     for func in features_funcs:
         column_names.append(func.__name__)
         features[func.__name__] = []
-        for i,samples in enumerate(data):
+        for samples in enumerate(data):
             features[func.__name__].append(func(y = samples,hop_length=1+int((len(samples))/features_no))[0])
     features['labels'] = label
     df = pd.DataFrame(features)
@@ -29,4 +32,4 @@ def extract_features(data,label,features_no,*features_funcs,):
     return df
 
 if __name__ == '__main__':
-    print(extract_features(data,label,3,zero_crossing_rate))
+    print(extract_features(data,label,4,zero_crossing_rate,))
