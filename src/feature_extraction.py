@@ -15,12 +15,18 @@ def extract_features(data,label,features_no,*features_funcs,):
     """
     print(type(data))
     features = {}
+    column_names = []
     for func in features_funcs:
+        column_names.append(func.__name__)
         features[func.__name__] = []
         for i,samples in enumerate(data):
             features[func.__name__].append(func(y = samples,hop_length=1+int((len(samples))/features_no))[0])
     features['labels'] = label
-    return pd.DataFrame(features)
+    df = pd.DataFrame(features)
+    for func in column_names:
+        df[[name+str(j) for name in column_names for j in range(1,features_no+1)] ] = pd.DataFrame(df[func].tolist(), index= df.index)
+        df.drop(columns=column_names,inplace=True)
+    return df
 
 if __name__ == '__main__':
     print(extract_features(data,label,3,zero_crossing_rate))
