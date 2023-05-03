@@ -1,6 +1,4 @@
-from sklearn.model_selection import RepeatedKFold
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import GridSearchCV
+from src import RepeatedKFold, GridSearchCV, KNeighborsClassifier, SVC
 
 def train_model(model, df):
     """Trains a machine learning model and returns the fitted model object."""
@@ -27,7 +25,7 @@ def train_model(model, df):
         # Hyperparameters tuning - Grid Search
         grid_search_knn = GridSearchCV(
             knn, parameters_knn, scoring=metrics, n_jobs=-1, cv=rkf)
-        grid_search_knn = grid_search_knn.fit(X_train, y_train)
+        grid_search_knn = grid_search_knn.fit(X, y)
 
         model = grid_search_knn.best_estimator_
 
@@ -38,12 +36,12 @@ def train_model(model, df):
             1, 0.1, 0.01, 0.001, 0.0001], 'kernel': ['rbf', 'poly']}
 
         # Model
-        svm = svm.SVC(decision_function_shape='ovo')
+        svm = SVC(decision_function_shape='ovo')
 
         # Hyperparameters tuning - Grid Search
         grid_search_svm = GridSearchCV(
             svm, parameters_svm, scoring=metrics, n_jobs=-1, cv=rkf)
-        grid_search_svm = grid_search_svm.fit(X_train, y_train)
+        grid_search_svm = grid_search_svm.fit(X, y)
 
         # Best model
         model = grid_search_svm.best_estimator_
