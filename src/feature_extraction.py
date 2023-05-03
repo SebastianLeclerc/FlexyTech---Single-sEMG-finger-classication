@@ -47,6 +47,14 @@ def framer_v2(data,frame_length,hop_length):
     return librosa.util.frame(data,frame_length=frame_length,hop_length = hop_length)
 
 
+### redefining features for the feature extraction function.###
+def mean(data,frame_length,hop_length):
+    return framer_v2(data,frame_length).mean(axis=0)
+
+def variance(data,frame_length,hop_length):
+    return framer_v2(data,frame_length,hop_length).variance(axis=0)
+
+
 def extract_features(data,label,features_no,*features_funcs,):
     """Extracts features from data and returns the fitted model object.
     create,recieves the processed and returns the labeled dataset for training the model.
