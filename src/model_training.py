@@ -1,3 +1,7 @@
+from sklearn.model_selection import RepeatedKFold
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+
 def train_model(model, df):
     """Trains a machine learning model and returns the fitted model object."""
 
