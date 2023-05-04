@@ -22,7 +22,6 @@ listeningAddress = (ip, port)
 
 dataComplete = []
 time_stamp = []
-
 #Make datagram socket using IPv4 addressing scheme and bind it 
 datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 datagramSocket.bind(listeningAddress)
