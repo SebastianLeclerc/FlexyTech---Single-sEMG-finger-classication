@@ -14,3 +14,4 @@ from .data_processing import preprocess_data
 from .feature_extraction import extract_features
 from .model_training import train_model
 from .model_evaluation import evaluate_model
+from sklearn import preprocessing

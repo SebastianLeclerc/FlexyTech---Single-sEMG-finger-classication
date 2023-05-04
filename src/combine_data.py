@@ -16,7 +16,7 @@ def combine_data(path:str):
             data.append(np.asarray(df.data.values,dtype=np.float32))
             labels.append(df.label.unique()[0])
             time_stamps.append(df.time)
-    data = np.array(data)
+    data = np.array(data).reshape(-1, 1)
     labels = np.array(labels)
     time_stamps = np.array(time_stamps)
     return data,labels,time_stamps
