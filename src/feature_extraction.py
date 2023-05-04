@@ -62,13 +62,13 @@ def _framer_v2(y,frame_length,hop_length):
 
 ### redefining features for the feature extraction function.###
 def mean(y,frame_length,hop_length):
-    return framer_v2(y,frame_length,hop_length).mean(axis=0)
+    return _framer_v2(y,frame_length,hop_length).mean(axis=0)
 
 def variance(y,frame_length,hop_length):
-    return framer_v2(y,frame_length,hop_length).var(axis=0)
+    return _framer_v2(y,frame_length,hop_length).var(axis=0)
 
 def zero_crossing_rate(y,frame_length,hop_length):
-    frames = framer_v2(y,frame_length,hop_length)
+    frames = _framer_v2(y,frame_length,hop_length)
     signs = np.sign(frames)
     difference = np.diff(signs,axis=0)
     absolute = np.abs(difference)
@@ -76,14 +76,29 @@ def zero_crossing_rate(y,frame_length,hop_length):
     return means / 2
 
 def iemg(y,frame_length,hop_length):
-    return np.abs(framer_v2(y, frame_length, hop_length)).sum(axis=0)
+    return np.abs(_framer_v2(y, frame_length, hop_length)).sum(axis=0)
 
 def root_mean_squared(y,frame_length,hop_length):
-    return np.sqrt(np.mean(framer_v2(y, frame_length, hop_length) ** 2,axis=0))
+    return np.sqrt(np.mean(_framer_v2(y, frame_length, hop_length) ** 2,axis=0))
+
+def mean_absolute_value(y,frame_length,hop_length):
+    return np.mean(np.abs(_framer_v2(y, frame_length, hop_length)),axis=0)
+
+def wave_form_length(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    diff = np.diff(frames,axis=0)
+    absolute = np.abs(diff)
+    sum = np.sum(absolute,axis=0)
+    return sum
+
+def standard_deviation(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    return np.std(frames,axis=0)
+
 #### to do #########
-# 'MeanAbsoluteValue(MAV)'
-# 'WaveformLength(WL)'
-# StandardDeviation(SD)'
+# 'MeanAbsoluteValue(MAV)' -- done not tested.
+# 'WaveformLength(WL)'     -- done not tested.
+# StandardDeviation(SD)'  -- done not tested.
 #  'Median'
 # 'Peak(PK)'
 #  'Min(MIN)'
