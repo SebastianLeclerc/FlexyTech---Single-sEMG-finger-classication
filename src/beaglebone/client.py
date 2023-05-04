@@ -1,49 +1,75 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import socket
-from time import sleep
-from datetime import datetime
+'''
+This will read a file in the filesystem where sensor data is located which is continuously updated.
+It will then then send it over a UDP socket with a sampling rate of 1K Hz, approximately
 
-import os
+Commented code is for a multithreading approach which in test was slower than doing this sequentially.
 
-#import Adafruit_BBIO.ADC as ADC
-# # Set up ADC
-# ADC.setup()
+WARNING: If this script is kept open - beaglebone needs to be shutdown due to some overflow error!
+'''
 
-#Server address:port var
+import queue
+import socket 
+import threading
+from time import sleep,time
+
+# Set server address and create a datagram socket
 serverAddress = ("192.168.7.1", 8080)
+clientSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#count = 0 # For keeping track of packages
 
-#Create a datagram socket
-tempSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-pin = "0"
-sensor='/sys/bus/iio/devices/iio:device0/in_voltage{}_raw'.format(pin)
+# Input to read from file, from a certain pin on the board
+pin = 0
+file = "/sys/bus/iio/devices/iio:device0/in_voltage{}_raw".format(pin)
+f = open(file, "r")
 
-data = []
-dataCount = 0
-f = open(sensor, "r")
-timeBefore = datetime.now()
+# Read sensor data from file and put in queue
+def read_sensor_data():
+    #global count
+    while(True):
+        try:
+            f.seek(0)
+            data = f.read().strip() #+ "," + str(count) # Last part for pkt counting
+            #count += 1
+            clientSensorSocket.sendto(data.encode(), serverAddress) #Sending string
+            sleep(0.001) # Play around with this value!
+        
+        except KeyboardInterrupt:
+            break
+        
+read_sensor_data()      
+        
+# Send sensor data to server from queue
+# def send_sensor_data():
+#     while(True):
+#         try:
+            
+#             data = data_queue.get()
+#             clientSensorSocket.sendto(data.encode(), serverAddress)
+#             #sleep(0.0005) #Play around with this value!
+#         except KeyboardInterrupt:
+#             break
 
-while True:
-    f.seek(0) #Init cursor to start of file
+        
+    #dataIn,_ = clientSensorSocket.recvfrom(128)#128
 
-    #analog_value = float(f.read()[:-1]) # Read analog value
-    #tempStr = str(analog_value)
-    analog_value = f.read()[:-1] #test
-    #analog_value = os.system('cat /sys/bus/iio/devices/iio:device0/in_voltage0_raw &> /dev/null')
-    data.append(analog_value)
-    #tempSensorSocket.sendto(tempStr.encode(), serverAddress) #send encoded data
-    #response = tempSensorSocket.recv(1024)
-    dataCount += 1
-    sleep(0.001) #1 ms, 1s = 1000 ms
-    if dataCount == 1000:
-        break
+      
+# Create a queue to hold the sensor data
+# data_queue = queue.Queue()
 
-timeAfter = datetime.now() - timeBefore
+# # Create a thread to read the sensor data
+# sensor_thread = threading.Thread(target=read_sensor_data)
+# send_thread = threading.Thread(target=send_sensor_data)
 
-ms = timeAfter.total_seconds() * 1000
+# # Start the threads
+# send_thread.start()
+# sensor_thread.start()
 
-#we get 100 000 data samples in the 10 s period (right now)
-
-print(ms)
-#print(datetime.strptime((timeAfter - timeBefore), "%S"))
-f.close()
+# while(True):
+#     try:
+#         pass
+#     except KeyboardInterrupt:
+#         clientSensorSocket.close() #Close socket
+#         print("Interrupt!")
+        
