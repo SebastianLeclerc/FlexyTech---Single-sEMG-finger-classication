@@ -78,6 +78,21 @@ def zero_crossing_rate(y,frame_length,hop_length):
 def iemg(y,frame_length,hop_length):
     return np.abs(framer_v2(y, frame_length, hop_length)).sum(axis=0)
 
+def root_mean_squared(y,frame_length,hop_length):
+    return np.sqrt(np.mean(framer_v2(y, frame_length, hop_length) ** 2,axis=0))
+#### to do #########
+# 'MeanAbsoluteValue(MAV)'
+# 'WaveformLength(WL)'
+# StandardDeviation(SD)'
+#  'Median'
+# 'Peak(PK)'
+#  'Min(MIN)'
+# 'AverageAmplitudeChange(ACC)'
+# 'Kurtosis(KURT)'
+# 'Skewness(SKEW)']
+
+
+
 def extract_features(data,label,features_no,overlapping_percentage=0.25,features_funcs=[]):
     """Extracts features from data and returns the fitted model object.
     create,recieves the processed and returns the labeled dataset for training the model.
@@ -106,4 +121,4 @@ def extract_features(data,label,features_no,overlapping_percentage=0.25,features
 
 if __name__ == '__main__':
     data,label,_= combine_data('./../data') # some tests.
-    print(extract_features(data = data,label = label,features_no= 3,overlapping_percentage=0.25,features_funcs=[mean,zero_crossing_rate,iemg]))
+    print(extract_features(data = data,label = label,features_no= 3,overlapping_percentage=0.25,features_funcs=[mean,root_mean_squared,iemg]))
