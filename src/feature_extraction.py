@@ -16,7 +16,7 @@ def _split_columns(df:pd.DataFrame,column_name:str,length:int) ->pd.DataFrame:
 
 
 
-def frame_v1(y,no_frames,overlapping_percetage = 0.25):
+def _frame_v1(y,no_frames,overlapping_percetage = 0.25):
     """            
     frame function
     based on the librosa framing function it returns a matrix with overlapping frames from the samples.
@@ -40,7 +40,7 @@ def frame_v1(y,no_frames,overlapping_percetage = 0.25):
     return librosa.util.frame(y,frame_length=no_frames,hop_length = hop_length)
 
 
-def framer_v2(y,frame_length,hop_length):
+def _framer_v2(y,frame_length,hop_length):
     """            
     frame function
     based on the librosa framing function it returns a matrix with overlapping frames from the samples.
