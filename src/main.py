@@ -1,4 +1,4 @@
-from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time
+from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time, train_test_split
 
 data_file_path = ''
 processed_data = preprocess_data(data_file_path)
