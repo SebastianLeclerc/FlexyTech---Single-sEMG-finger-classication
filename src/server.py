@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+'''
+This will listen to keyboard input (1 - 5) and when pressed collect incomming UDP data from a listening socket.
+It will then save the data in separate JSON files, when the sample looks "good" in the resulting graph image, which is based on a JSON data file.
+'''
+
 import socket
 import json
 import keyboard
@@ -48,13 +53,13 @@ def save_json(label):
 #Receive new data to append
 def receive_data():
     emgVal,_ = datagramSocket.recvfrom(128)
-    emgVal = emgVal.decode() #.split(",") # Decode incomming traffic, split sensor and counter value
+    emgVal = emgVal.decode() #.split(",") # Decode incomming traffic, split for packet counting if needed
     dataComplete.append(emgVal)
-    time_stamp.append(time.time()) # If timestamp is needed
-    #print(time_stamp[-1])
-    #return int(emgVal[1])
+    time_stamp.append(time.time())
+    #return int(emgVal[1]) # For packet counting
         
-"""     
+"""
+# Old working function to alert user if packet is dropped (never saw this during test)
 def old_listen_keyboard():
     start, current, i = 0, 0, 0
     if keyboard.is_pressed('1'): # Thumb
@@ -67,7 +72,7 @@ def old_listen_keyboard():
                 print("PACKET DROPPED!") # IS BEING SPAMMED
 """
 
-#Listen to keyboard press
+#Listen to keyboard press, clear data list, get new data and save it
 def listen_keyboard():
     if keyboard.is_pressed('1'): #Thumb
         dataComplete.clear()
@@ -95,8 +100,8 @@ def listen_keyboard():
             receive_data()
         save_json('5')
 
+# Plot a graph based on JSON data and save it
 def plotting(path):
-    #print(path) #x11
     df = pd.read_json("../data/" + path + "data.json")
 
     label = df['label'][0]
@@ -112,9 +117,11 @@ def plotting(path):
 
     plt.savefig('../plots/' + path + '.png')
 
+# Some information
 print("Hold number key 1-5 to record data in JSON (\'ctrl+c\' to exit)")
 print("1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Little")
 
+# Try to listen to the keyboard until interrupted, close the socket
 while(True):
     try:
         listen_keyboard()
