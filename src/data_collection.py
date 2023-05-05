@@ -1,32 +1,136 @@
-from src import json, random, os, time
+#!/usr/bin/python
+#from . import socket, json, keyboard, time, datetime, pd, np, plt, FuncAnimation
+'''
+This will listen to keyboard input (1 - 5) and when pressed collect incomming UDP data from a listening socket.
+It will then save the data in separate JSON files, when the sample looks "good" in the resulting graph image, which is based on a JSON data file.
+'''
 
-fingers = ['thumb', 'index finger', 'middle finger', 'ring finger', 'little finger']
-time_to_collect = 10
-time_to_rest = 4
-participant_name = input("Please enter your name: ")
+'''
+This will listen to keyboard input (1 - 5) and when pressed collect incomming UDP data from a listening socket.
+It will then save the data in separate JSON files, when the sample looks "good" in the resulting graph image, which is based on a JSON data file.
+'''
 
-finger_data = []
-for finger in fingers:
-    print(f"Please start closing and opening your right {finger}.")
-    time.sleep(1)
-    data = []
-    for i in range(time_to_collect):
-        remaining_time = time_to_collect - i
-        print(f"{remaining_time} seconds for {finger} remaining...")
-        sensor_data = random.uniform(0, 1) # delete this
-        data.append(sensor_data)
-        time.sleep(1)
-        if i == (time_to_collect-1):
-            print(f"Collection for {finger} is done. Have a short {time_to_rest} seconds rest now.")
-    finger_data.append({"data": data, "finger": finger})
-    time.sleep(time_to_rest)
+import socket
+import json
+import keyboard
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import time
+import datetime
+import pandas as pd
+import numpy as np
 
-data = {"fingers": finger_data}
-filename = f"{participant_name}_{time.strftime('%Y-%m-%d')}.json"
-if not os.path.exists("../data"):
-    os.makedirs("../data")
-file_path = os.path.join("../data", filename)
-with open(file_path, 'w') as f:
-    json.dump(data, f)
+#Set IP and Port of listening server
+ip      = "192.168.7.1"
+port    = 8080
+listeningAddress = (ip, port)
 
-print(f"data collection completed. Thank you, {participant_name}!")
+dataComplete = []
+time_stamp = []
+
+#Make datagram socket using IPv4 addressing scheme and bind it 
+datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+datagramSocket.bind(listeningAddress)
+
+name = input("Enter subject name: ")
+
+#Save data in JSON with labels
+def save_json(label):
+    global dataComplete
+    #Could clear terminal/STDIN here to not have "1111111" when recording.
+    fingers = ['THUMB', 'INDEX', 'MIDDLE', 'RING', 'LITTLE']
+    finger = fingers[int(label)-1]
+    sample = input(f"{finger} sample number (\'q\' to go again): ")
+    if (sample == "q"):
+        pass
+    else:
+        filename = str(name) + str(sample) + str(label) # Will save each finger in separate files
+        
+        data_to_save = {'label': label, 'data': dataComplete, 'time':time_stamp}
+        with open("../data/" + filename + "data.json", 'w') as f:
+            json.dump(data_to_save, f, indent = 4)
+        plotting(filename)
+        print('Data saved with label:', label, "length: ", len(dataComplete))
+        dataComplete.clear()
+        time_stamp.clear()
+        print("\n1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Little") # Friendly output
+
+#Receive new data to append
+def receive_data():
+    emgVal,_ = datagramSocket.recvfrom(128)
+    emgVal = emgVal.decode() #.split(",") # Decode incomming traffic, split for packet counting if needed
+    dataComplete.append(emgVal)
+    time_stamp.append(time.time())
+    #return int(emgVal[1]) # For packet counting
+        
+"""
+# Old working function to alert user if packet is dropped (never saw this during test)
+def old_listen_keyboard():
+    start, current, i = 0, 0, 0
+    if keyboard.is_pressed('1'): # Thumb
+        dataComplete.clear() # Clear data before saving
+        start = receive_data() # Sanity check, start of UDP transmission counter
+        while keyboard.is_pressed('1'): 
+            current = receive_data() # Current counter
+            i += 1
+            if (start + i != current): # If we have dropped, consider restarting the data collection
+                print("PACKET DROPPED!") # IS BEING SPAMMED
+"""
+
+#Listen to keyboard press, clear data list, get new data and save it
+def listen_keyboard():
+    if keyboard.is_pressed('1'): #Thumb
+        dataComplete.clear()
+        while keyboard.is_pressed('1'):
+            receive_data()
+        save_json('1')
+    elif keyboard.is_pressed('2'): #Index
+        dataComplete.clear()
+        while keyboard.is_pressed('2'):
+            receive_data()
+        save_json('2')
+    elif keyboard.is_pressed('3'): #Middle
+        dataComplete.clear()
+        while keyboard.is_pressed('3'):
+            receive_data()
+        save_json('3')
+    elif keyboard.is_pressed('4'): #Ring
+        dataComplete.clear()
+        while keyboard.is_pressed('4'):
+            receive_data()
+        save_json('4')
+    elif keyboard.is_pressed('5'): #Little
+        dataComplete.clear()
+        while keyboard.is_pressed('5'):
+            receive_data()
+        save_json('5')
+
+# Plot a graph based on JSON data and save it
+def plotting(path):
+    df = pd.read_json("../data/" + path + "data.json")
+
+    label = df['label'][0]
+    x = df['data']
+    time = df['time']
+
+    fig, ax = plt.subplots()
+    ax.plot(time, x)
+    ax.set_title(label)
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Data')
+    ax.grid()
+
+    plt.savefig('../plots/' + path + '.png')
+
+# Some information
+print("Hold number key 1-5 to record data in JSON (\'ctrl+c\' to exit)")
+print("1 = Thumb, 2 = Index, 3 = Middle, 4 = Ring, 5 = Little")
+
+# Try to listen to the keyboard until interrupted, close the socket
+while(True):
+    try:
+        listen_keyboard()
+    except KeyboardInterrupt:
+        datagramSocket.close() #Close socket
+        print("Interrupt!")
+        break

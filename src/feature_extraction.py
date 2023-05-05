@@ -1,9 +1,11 @@
 from combine_data import combine_data
+from data_processing import preprocess_data
 import librosa
 from math import floor
 import numpy as np
 import pandas as pd
 from scipy.stats import skew,kurtosis
+import warnings
 
 
 def _split_columns(df:pd.DataFrame,column_name:str,length:int) ->pd.DataFrame:
@@ -75,7 +77,8 @@ def zero_crossing_rate(y,frame_length,hop_length):
     difference = np.diff(signs,axis=0)
     absolute = np.abs(difference)
     means= np.mean(absolute,axis=0)
-    return means / 2
+    warnings.warn("needs fixing the results might be wrong.")
+    return means / 2 ## needs fixing
 
 def iemg(y,frame_length,hop_length):
     return np.abs(_framer_v2(y, frame_length, hop_length)).sum(axis=0)
@@ -150,7 +153,10 @@ def extract_features(data,label,features_no,overlapping_percentage=0.25,features
         column_names.append(func.__name__)
         features[func.__name__] = []
         for samples in data:
-            features[func.__name__].append(func(y = samples,frame_length=floor(len(data)/features_no-1),hop_length=int((1-overlapping_percentage)*floor((len(samples))/features_no))))
+            frames = floor(len(data)/features_no-1)
+            hops = int((1-overlapping_percentage)*floor((len(samples))/features_no))
+
+            features[func.__name__].append(func(y = samples,frame_length=frames,hop_length=hops))
     features['labels'] = label
 
     df = pd.DataFrame(features)
@@ -161,5 +167,6 @@ def extract_features(data,label,features_no,overlapping_percentage=0.25,features
     return df
 
 if __name__ == '__main__':
-    data,label,_= combine_data('./../data') # some tests.
-    print(extract_features(data = data,label = label,features_no= 3,overlapping_percentage=0.25,features_funcs=[mean,root_mean_squared,iemg]))
+    data,label,_= preprocess_data('./../data') # some tests.
+    features = [mean,standard_deviation,median,skewness,kurt,iemg,wave_form_length,mean_absolute_value,root_mean_squared]
+    extract_features(data = data,label = label,features_no= 3,overlapping_percentage=0.25,features_funcs=features).to_csv('./../../data.csv')
