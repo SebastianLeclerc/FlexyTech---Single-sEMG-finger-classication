@@ -5,6 +5,11 @@ This will listen to keyboard input (1 - 5) and when pressed collect incomming UD
 It will then save the data in separate JSON files, when the sample looks "good" in the resulting graph image, which is based on a JSON data file.
 '''
 
+'''
+This will listen to keyboard input (1 - 5) and when pressed collect incomming UDP data from a listening socket.
+It will then save the data in separate JSON files, when the sample looks "good" in the resulting graph image, which is based on a JSON data file.
+'''
+
 import socket
 import json
 import keyboard
@@ -22,6 +27,7 @@ listeningAddress = (ip, port)
 
 dataComplete = []
 time_stamp = []
+
 #Make datagram socket using IPv4 addressing scheme and bind it 
 datagramSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 datagramSocket.bind(listeningAddress)

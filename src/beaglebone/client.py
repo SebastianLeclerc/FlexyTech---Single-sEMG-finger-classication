@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-<<<<<<< HEAD
 '''
 This will read a file in the filesystem where sensor data is located which is continuously updated.
 It will then then send it over a UDP socket with a sampling rate of 1K Hz, approximately
@@ -21,34 +20,12 @@ clientSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #count = 0 # For keeping track of packages
 
 # Input to read from file, from a certain pin on the board
-=======
-### using multithreading 
-'''
-in this code the sensor data is read and saved in the memory where it is continuously updated.
-the sensor thread continuosly enqueue the sensor reading at 1Khz sampling frequency, and the send thread will send the data
-to the computer/laptop.
-it doesn't matter how fast we recieve the data as long as we measure it at the right frequency.
-
-If this script is kept open - beaglebone needs to be shutdown due to some overflow error!
-'''
-import queue
-import socket 
-import threading
-from time import sleep,time
-
-# Set server address and create a datagram socket
-serverAddress = ("192.168.7.1", 8080)
-clientSensorSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-# Analog input to read from file
->>>>>>> normalize_and_recenter
 pin = 0
 file = "/sys/bus/iio/devices/iio:device0/in_voltage{}_raw".format(pin)
 f = open(file, "r")
 
 # Read sensor data from file and put in queue
 def read_sensor_data():
-<<<<<<< HEAD
     #global count
     while(True):
         try:
@@ -57,14 +34,6 @@ def read_sensor_data():
             #count += 1
             clientSensorSocket.sendto(data.encode(), serverAddress) #Sending string
             sleep(0.001) # Play around with this value!
-=======
-    while(True):
-        try:
-            f.seek(0)
-            data = f.read().strip()
-            clientSensorSocket.sendto(data.encode(), serverAddress)
-            sleep(0.001) #Play around with this value!
->>>>>>> normalize_and_recenter
         
         except KeyboardInterrupt:
             break
