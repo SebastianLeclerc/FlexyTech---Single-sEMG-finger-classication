@@ -3,6 +3,8 @@ import librosa
 from math import floor
 import numpy as np
 import pandas as pd
+from scipy.stats import skew,kurtosis
+
 
 def _split_columns(df:pd.DataFrame,column_name:str,length:int) ->pd.DataFrame:
     '''
@@ -95,16 +97,40 @@ def standard_deviation(y,frame_length,hop_length):
     frames = _framer_v2(y, frame_length, hop_length)
     return np.std(frames,axis=0)
 
+def median(y,frame_length,hop_length):
+    frames = _framer_v2(y,frame_length,hop_length)
+    return np.median(frames,axis=0)
+
+def min(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    return np.min(frames,axis=0)
+
+
+def max(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    return np.max(frames,axis=0)
+
+def skewness(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    return skew(frames, axis=0)
+
+def kurt(y,frame_length,hop_length):
+    frames = _framer_v2(y, frame_length, hop_length)
+    return kurtosis(frames, axis=0)
+
+
+
+
 #### to do #########
 # 'MeanAbsoluteValue(MAV)' -- done not tested.
 # 'WaveformLength(WL)'     -- done not tested.
 # StandardDeviation(SD)'  -- done not tested.
-#  'Median'
+#  'Median'               -- done not tested.
 # 'Peak(PK)'
-#  'Min(MIN)'
+#  'Min(MIN)'            --done not tested.
 # 'AverageAmplitudeChange(ACC)'
-# 'Kurtosis(KURT)'
-# 'Skewness(SKEW)']
+# 'Kurtosis(KURT)'       --done not tested.
+# 'Skewness(SKEW)'        --done not tested.
 
 
 
