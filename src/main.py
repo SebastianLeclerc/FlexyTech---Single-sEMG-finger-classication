@@ -1,5 +1,5 @@
-from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time, train_test_split
-
+from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time, train_test_split,combine_data
+from feature_extraction import *
 
 
 
@@ -9,7 +9,20 @@ from src import preprocess_data, train_model, evaluate_model, extract_features, 
 
 
 def main():
-    pass
+    # loading the and processing data.
+    preprocessed_data,labels,timeStamps = preprocess_data("./../data")
+    # parameters for feature extraction.
+    features = [mean,median] # add the features.
+    no_features= 2 # no.frames
+    overlapping = 0.25 # overlapping window percentage. (0-1)
+    # creating a dataframe with all the features for model training.
+    df = extract_features(data=preprocessed_data,features_no=no_features,overlapping_percentage=overlapping,
+                          features_funcs=features)
+    # training model.
+    model = train_model(model='..',df=df)
+    # model evaluation
+    #### to do.
+
 
 if __name__ == '__main__':
     main

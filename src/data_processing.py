@@ -3,6 +3,31 @@ import os
 from combine_data import combine_data  #from the module 'combine_data' import the function 'combine_data'
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
+from scipy.signal import butter, lfilter
+
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    return butter(order, [lowcut, highcut], fs=fs, btype='band')
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+def filter(voltage_values,low_cut=1,high_cut=55,fs = 1e3,):
+    '''
+    band pass filter based on the scipy butter bandpass, allowing frequency between low cut and high cut to pass through.
+    input : np.array of the data voltage values.
+    low_cut : lowest frequency defaults at 1
+    high cut : highest frequency in the band filter defaults at 55.
+    '''
+    return butter_bandpass_filter(voltage_values,low_cut=low_cut,highcut=high_cut,fs = fs)
+
+
+def ADC_to_v(sample:np.array,max_voltage = 1.8,ADC_resolution = 4095,resting_voltage=1.5):
+    return sample * (max_voltage)/ADC_resolution - 1.5
+
+
 
 
 def normalize_data(sample:np.array):
