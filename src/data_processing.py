@@ -14,12 +14,12 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-def filter(voltage_values,low_cut=1,high_cut=55,fs = 1e3,):
+def filter(voltage_values,low_cut=1,high_cut=60,fs = 1e3,):
     '''
     band pass filter based on the scipy butter bandpass, allowing frequency between low cut and high cut to pass through.
     input : np.array of the data voltage values.
     low_cut : lowest frequency defaults at 1
-    high cut : highest frequency in the band filter defaults at 55.
+    high cut : highest frequency in the band filter defaults at 60.
     '''
     return butter_bandpass_filter(voltage_values,low_cut=low_cut,highcut=high_cut,fs = fs)
 
