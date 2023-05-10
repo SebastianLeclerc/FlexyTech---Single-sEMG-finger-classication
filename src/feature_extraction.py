@@ -13,7 +13,7 @@ def _split_columns(df:pd.DataFrame,column_name:str,length:int) ->pd.DataFrame:
     a simple function that split the column of list to multiple columns
     and return a data frame object
     '''
-    column_names = [column_name + str(i) for i in range(1,length+2)]
+    column_names = [column_name + str(i) for i in range(1,length+1)]
     #, columns=column_names
     return pd.DataFrame(df[column_name].to_list(),columns=column_names)
 
@@ -153,14 +153,14 @@ def extract_features(data,label,features_no,overlapping_percentage=0.25,features
         column_names.append(func.__name__)
         features[func.__name__] = []
         for samples in data:
-            frames = floor(len(data)/features_no-1)
+            frames = floor((len(data)/features_no)+ floor(overlapping_percentage * len(samples)))
             hops = int((1-overlapping_percentage)*floor((len(samples))/features_no))
 
             features[func.__name__].append(func(y = samples,frame_length=frames,hop_length=hops))
     features['labels'] = label
 
     df = pd.DataFrame(features)
-    print(df)
+    print(func.__name__)
     labels = df.labels
     df = pd.concat([_split_columns(df,column_name=column,length=features_no) for column in column_names],axis=1)
     df['label'] = labels
