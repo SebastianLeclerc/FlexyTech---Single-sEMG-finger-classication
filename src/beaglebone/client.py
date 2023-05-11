@@ -2,16 +2,16 @@
 
 '''
 This will read a file in the filesystem where sensor data is located which is continuously updated.
-It will then then send it over a UDP socket with a sampling rate of 1K Hz, approximately
+It will then send it over a UDP socket with a sampling rate of 1K Hz, approximately
 
 Commented code is for a multithreading approach which in test was slower than doing this sequentially.
 
 WARNING: If this script is kept open - beaglebone needs to be shutdown due to some overflow error!
 '''
 
-import queue
+#import queue
 import socket 
-import threading
+#import threading
 from time import sleep,time
 
 # Set server address and create a datagram socket
