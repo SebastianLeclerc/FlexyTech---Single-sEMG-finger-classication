@@ -1,12 +1,4 @@
-from src import preprocess_data, train_model, evaluate_model, extract_features, pickle, os, time, train_test_split,combine_data
 from feature_extraction import *
-
-
-
-
-
-
-
 
 def main():
     # loading the and processing data.

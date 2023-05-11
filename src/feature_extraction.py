@@ -1,5 +1,4 @@
-from combine_data import combine_data
-from data_processing import preprocess_data
+from src.data.data_processing import preprocess_data
 import librosa
 from math import floor
 import numpy as np

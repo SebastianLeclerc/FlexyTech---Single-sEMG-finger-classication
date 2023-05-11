@@ -11,8 +11,6 @@ def train_model_ann(X_train,y_train,model_architecture,):
     model architecture list of number of nodes in hidden layers.
     example 
     if model is architecture [4,3] then the model has 2 hidden layers each have 4 and 3 nodes respectively.
-
-
     '''
     model = Sequential()
     model.add(keras.layers.Input(shape=X_train.shape[1:]))
@@ -20,7 +18,6 @@ def train_model_ann(X_train,y_train,model_architecture,):
         model.add(keras.layers.Dense(i))
         model.add(keras.layers.Dropout(0.2))
     model.add(keras.layers.Dense(3,activation = 'softmax'))
-
 
     return model
 

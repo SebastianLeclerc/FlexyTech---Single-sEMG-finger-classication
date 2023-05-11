@@ -1,7 +1,8 @@
-<<<<<<< HEAD
 from src import np, pd
-import scipy as sp
 from scipy.stats import skew, kurtosis
+from src.data.combine_data import combine_data
+import librosa
+from math import floor
 
 def extract_features(data, overlap):
     """
@@ -58,14 +59,6 @@ def extract_features(data, overlap):
     data = pd.concat([data, df_features], axis=1)
 
     return data
-=======
-from combine_data import combine_data
-import librosa
-from math import floor
-import numpy as np
-import pandas as pd
-from scipy.stats import skew,kurtosis
-
 
 def _split_columns(df:pd.DataFrame,column_name:str,length:int) ->pd.DataFrame:
     '''
@@ -222,10 +215,5 @@ def extract_features(data,label,features_no,overlapping_percentage=0.25,features
     return df
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    print(extract_features(data,label,3,zero_crossing_rate))
->>>>>>> normalize_and_recenter
-=======
     data,label,_= combine_data('./../data') # some tests.
     print(extract_features(data = data,label = label,features_no= 3,overlapping_percentage=0.25,features_funcs=[mean,root_mean_squared,iemg]))
->>>>>>> multithreading

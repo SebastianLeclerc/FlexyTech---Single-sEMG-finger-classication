@@ -1,4 +1,6 @@
 from src import pd, accuracy_score, precision_score, roc_auc_score, recall_score, f1_score, mean_absolute_error
+
+
 def evaluate_model(model, trained_model, df_test):
     """Evaluates a machine learning model and returns the evaluation metrics."""
 
