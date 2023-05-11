@@ -55,12 +55,10 @@ def preprocess_data(filepath):
     Loads data from file and returns processed data.
     filepath: directory of the data.
     returns a tuple of the processed data, labels, and formated timestamps.
-    
-    
     """
     # df = pd.read_csv('./../data', delimiter=r"\s+")
-    data, labels, time_stamps = combine_data(
-        filepath)  # call the function combine_data with the correct file path. ./../data -> from current directory / go back / go to 'data'
+    data, labels, time_stamps = combine_data(filepath)
+    # call the function combine_data with the correct file path. ./../data -> from current directory / go back / go to 'data'
     # To Do
     # scale the data and return the scaled data
     for i in range(len(data)):
@@ -74,4 +72,3 @@ def preprocess_data(filepath):
 
 if __name__ == '__main__':
     print(preprocess_data('../../data'))
-# print(preprocess_data('./../data'))
