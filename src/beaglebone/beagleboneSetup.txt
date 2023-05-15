@@ -1,0 +1,38 @@
+BEAGLEBONE SETUP
+
+installed the beaglebone using the image:
+AM3358 Debian 10.3 2020-04-06 4GB SD IoT
+"Buster IoT (without graphical desktop) for BeagleBone and PocketBeagle via microSD card"
+with a 32 GB microSD card
+
+Network connection through USB (every reboot):
+sudo /sbin/route add default gw 192.168.7.1
+sudo su
+temppwd
+echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+
+Then on PC:
+Share Wireless connection with Ethernet
+Change Ethernet to IPv4 address 192.168.7.1/24 with DNS 8.8.8.8
+
+Update the system:
+sudo apt-get update
+sudo apt-get upgrade
+sudo reboot now
+
+Python 3.7.3 installs:
+sudo python3 -m pip install --upgrade pip
+python3 -m pip install
+pandas==1.3
+numpy==1.20
+scipy
+sklearn
+jupyterlab
+matplotlib
+warning from python:  '/home/debian/.local/bin' which is not on PATH.
+
+To expand the microSD card (use all 32 GB on the card):
+cd /opt/scripts/tools/
+git pull || true
+sudo ./grow_partition.sh
+sudo reboot
