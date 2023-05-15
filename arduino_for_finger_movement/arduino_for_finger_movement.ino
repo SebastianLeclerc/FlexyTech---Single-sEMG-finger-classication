@@ -1,15 +1,11 @@
 #include <Servo.h>
 
-Servo index;  // create servo object to control a servo
-Servo middle;
-Servo ring_little;
+Servo index, middle, ring_little;  // create servo object to control a servo
 
 int sensorPin1 = 2;  //Replace with the correct pin number.
 int sensorPin2 = 3;
 int sensorPin3 = 4;
-int sensorValue1;  //Sensor value from sensorPin1
-int sensorValue2;
-int sensorValue3;
+int sensorValue1, sensorValue2, sensorValue3;  //Sensor value from sensorPin1
 
 int pos = 0;  // variable to store the servo position
 
@@ -42,7 +38,7 @@ void loop() {
 void moveFinger(Servo finger) {
   for (pos = 0; pos <= 160; pos += 2) {  // goes from 0 degrees to 160 degrees in steps of 2 degree
     finger.write(pos);                   // tell servo to go to position in variable 'pos'
-    delay(5);
+    delay(5);                            // delays for 5 ms 
   }
   for (pos = 160; pos >= 0; pos -= 2) {  // goes from 160 degrees to 0 degrees
     finger.write(pos);                   // tell servo to go to position in variable 'pos'
