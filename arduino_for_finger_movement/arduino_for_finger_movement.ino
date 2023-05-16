@@ -1,4 +1,4 @@
-#include <Servo.h>
+#include "Servo.h"
 
 Servo index, middle, ring_little;  // create servo object to control a servo
 
@@ -9,8 +9,10 @@ int sensorValue1, sensorValue2, sensorValue3;  //Sensor value from sensorPin1
 
 int pos = 0;  // variable to store the servo position
 
+void moveFinger(Servo finger);
+
 void setup() {
-  index.attach(9);  // attaches the servo on pin 9 to the servo object
+  index.attach(9);  // attaches the servo on pin 9 to the servo object. All these pins are PWM which is recommended by arduino for running the hand
   middle.attach(10);
   ring_little.attach(11);
   Serial.begin(9600);
@@ -25,6 +27,8 @@ void loop() {
   sensorValue2 = digitalRead(sensorPin2);
   sensorValue3 = digitalRead(sensorPin3);
 
+  //The threshold for LOW(logic 0)(Expressed in Volt = 2.35V) is 0.3 Vcc and the threshold for HIGH (Logic 1)(Expressed in Volt = 2.60V) is 0.6Vcc
+  //Maxiumum output voltage of the beaglebone green is 3.3V
   if (sensorValue1 == HIGH) {
     //send which pin to the 'move function' in order to make the correct finger move
     moveFinger(index);
