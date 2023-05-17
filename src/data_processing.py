@@ -4,7 +4,7 @@ from combine_data import combine_data  #from the module 'combine_data' import th
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from scipy.signal import butter, lfilter
-
+from src import MinMaxScaler, MaxAbsScaler, Normalizer, StandardScaler, BorderlineSMOTE, OriginalGenerator, GANGenerator
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
     return butter(order, [lowcut, highcut], fs=fs, btype='band')
@@ -71,6 +71,61 @@ def preprocess_data(filepath):
         time_stamps[i] = format_timestamps(time_stamps[i])
 
     return data, labels, time_stamps
+
+def scale_method(name_scale_method, data):
+     
+    """
+    Provides a selection of data scaling techniques to choose from
+    :param name_scale_method: name of the scale technique selected
+    :param data: data to be scaled
+    return scaled data
+    """
+  
+    if name_scale_method == 'MinMaxScaler':
+        min_max_scaler = MinMaxScaler().fit(data)
+        X = min_max_scaler.transform(data)
+
+    elif name_scale_method == 'MaxAbsScaler':
+        scaler = MaxAbsScaler().fit(data)
+        X = scaler.transform(data)
+
+    elif name_scale_method == 'StandardScaler':
+        scaler = StandardScaler().fit(data)
+        X = scaler.transform(data)
+        
+    elif name_scale_method == 'Normalizer':
+        scaler = Normalizer().fit(data)
+        X = scaler.transform(data)
+
+    elif name_scale_method == 'None':
+        X = data
+
+    else:
+        raise Exception("Unknown scaling method")
+
+    return X
+
+def augmentation_method(augmentation_method, X_train, y_train, X_test, data_x_times):
+
+    """
+    Provides a selection of data augmentation techniques to choose from
+    :param augmentation_method: name of the data augmentation technique selected
+    :param X_train: features training data 
+    :param y_train: labels training data 
+    :param X_test: features test data 
+    return feature training data augmented, labels training data augmented
+    """
+    if augmentation_method == 'SMOTE':
+        sm = BorderlineSMOTE(sampling_strategy={0:max(y_train.value_counts())*data_x_times + abs((max(y_train.value_counts())) - (y_train.label==y_train.label.unique()[0]).sum()), 
+                                                1:max(y_train.value_counts())*data_x_times + abs((max(y_train.value_counts())) - (y_train.label==y_train.label.unique()[1]).sum()), 
+                                                2:max(y_train.value_counts())*data_x_times + abs((max(y_train.value_counts())) - (y_train.label==y_train.label.unique()[2]).sum())}, random_state=42, )
+        
+        X_aug, y_aug = sm.fit_resample(X_train, y_train)
+
+    if augmentation_method == 'GAN':
+        X_aug, y_aug = GANGenerator(gen_x_times=data_x_times).generate_data_pipe(X_train, y_train, X_test, )
+
+    return X_aug, y_aug
 
 
 if __name__ == '__main__':
