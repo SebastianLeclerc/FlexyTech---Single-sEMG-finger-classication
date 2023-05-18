@@ -3,7 +3,7 @@ from src import np, pd, sp, skew, kurtosis
 def extract_features(data, feature_names):
     
     """
-    Extracts features from data and returns the fitted model object.
+    Extract a set of time domain features given one window
     :param data: data from one window
     :param features_names: list of all features to calcultate
     """
