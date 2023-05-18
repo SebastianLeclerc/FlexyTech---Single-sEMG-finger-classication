@@ -127,6 +127,40 @@ def augmentation_method(augmentation_method, X_train, y_train, X_test, data_x_ti
 
     return X_aug, y_aug
 
+def create_df_window (frames, window_sizes, overlap_percentages, col_names):
+    """
+    Create n dataframes based on the number of combinations of windows sizes and overlap percentage
+
+    Parameters:
+    frames(ndarray): raw data with n frames of shape(number_of_frames, number_of_samples(fixed in 1000))
+    window_sizes(list): list of window sizes
+    overlap_percentages(list): list of overlap percentages
+
+    Returns:
+    dict: nested dictionary (Keys = (1,number of combinations of windows sizes and overlap percentage) : { WindowSize: windows size, Overlap: percentage overlap, DataFrame : data frame with shape (n_frames, n_features*number_of_windows)))
+    """
+    dict_dfs = {}
+    cont_comb = 1
+
+    for window_size in window_sizes:
+      for overlap in overlap_percentages:
+        df_current = pd.DataFrame()
+        for frame in range(frames.shape[0]):
+          windows = sliding_window(frames[frame], window_size, overlap)
+          df_row = pd.DataFrame()
+          for window in range(len(windows)):
+            current_col_names = ["%s_%s" % (col_names[c], str(window)) for c in range(len(col_names))]
+            window_features = extract_features(windows[window], current_col_names)
+            df_row = pd.concat([df_row, window_features], axis=1)
+          df_current =pd.concat([df_current, df_row], axis=0)
+        dict_dfs[cont_comb] = {}
+        dict_dfs[cont_comb]['DataFrame'] = df_current 
+        dict_dfs[cont_comb]['WindowSize'] = window_size 
+        dict_dfs[cont_comb]['Overlpa'] = overlap
+        cont_comb = cont_comb + 1
+
+    return dict_dfs
+
 
 if __name__ == '__main__':
     print(preprocess_data('./../data'))
