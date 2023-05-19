@@ -23,12 +23,14 @@ sudo reboot now
 Python 3.7.3 installs:
 sudo python3 -m pip install --upgrade pip
 python3 -m pip install
-pandas==1.3
-numpy==1.20
-scipy
-sklearn
+pandas==1.3.0
+numpy==1.20.0
+scipy==1.7.3
+scikit-learn==1.0.2
 jupyterlab
 matplotlib
+ipykernel==6.16.2
+ipython==7.34.0 
 warning from python:  '/home/debian/.local/bin' which is not on PATH.
 
 To expand the microSD card (use all 32 GB on the card):
