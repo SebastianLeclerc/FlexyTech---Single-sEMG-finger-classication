@@ -20,7 +20,7 @@ void setup() {
   pinMode(sensorPin2, INPUT);
   pinMode(sensorPin3, INPUT);
 
-
+  //Reset fingers to 0 (ring_little motor is reversed)
   index.write(0);
   middle.write(0);
   ring_little.write(180); 
