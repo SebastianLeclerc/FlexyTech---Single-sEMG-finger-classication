@@ -4,6 +4,7 @@ Hardware:
 * SeeedStudio BeagleBone Green v1
 * Seeedstudio Grove EMG Detector v1.1
 * A robotic hand with servo motors for each finger
+* Arduino Uno with a MotorShield v2.3 to drive servo motors
 * Jumper wires and a laptop
 
 Software:
