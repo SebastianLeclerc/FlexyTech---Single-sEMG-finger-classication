@@ -3,16 +3,29 @@ Here is a short explanation of our folders and files:
 README.md:
 A file that provides a brief overview of the project and how to use it.
 
+archive/:
+A folder that contains the Python code used during the project that is however not necessary at the current state.
+
 data/:
-A folder that contains all the data files used in the project.
+A folder that contains all the collected data.
+-> data/n_second-attempt/ contains the 400 samples we trained model on
+
+plots/:
+A folder that contains the plots of the collected data.
+
+sensor_location/:
+A folder that contains the images that show where the sensors are placed.
 
 models/:
 A folder that contains all the trained models.
 
 src/:
 A folder that contains all the Python code for the project.
-It includes modules for data processing, feature extraction, model training, model evaluation as well as a main.py file that ties everything together.
-main.py is the entry point to the project. It imports the necessary modules from src/ and uses them to train and evaluate the models.
+-> src/beaglebone/beaglebone_setup.txt explains how the beaglebone was setup
+-> src/beaglebone/data_collection_sampler.ipynb is the jupyter notebook for collecting the data
+-> src/model_trainer.py is used for training the 3 models (kNN, GB, RF)
+-> src/beaglebone/sampler_and_predictor.ipynb is the jupyter notebook for the predictor and robot mover
+-> src/arduino/arduino_for_finger_movement.ino is the code running on the arduino to listen for incoming GPIO signal -> move finger motor
 
 requirements.txt:
 A file that lists all the Python packages required to run the project.
@@ -20,3 +33,6 @@ A file that lists all the Python packages required to run the project.
 
 setup.py:
 A file that contains the project metadata and package installation instructions.
+
+acuracies_results.xlsx:
+Contains all the results for the deployed models.
