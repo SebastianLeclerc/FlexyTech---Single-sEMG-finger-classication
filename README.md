@@ -10,4 +10,4 @@ Hardware:
 Software:
 * Jupyter Notebook for collecting data saved as JSON files, and graphs
 * Python code for training kNN, Gradient Boosting, and RF
-* Jupyter Notebook for prediction, graphs, and actuating the robotic hand
+* Jupyter Notebook for prediction, graphs + Arduino code for actuating the robotic hand
