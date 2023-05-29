@@ -122,7 +122,7 @@ model = 'rf' # the name of the model to train the data
 pca = PCA()
 # Define a Standard Scaler to normalize inputs
 scaler = RobustScaler()
-scaler_MinMax = MinMaxScaler
+scaler_MinMax = MinMaxScaler()
 # defining the estimators
 knn = KNeighborsClassifier()
 rf = RandomForestClassifier()
