@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import RobustScaler, MinMaxScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 
@@ -122,6 +122,7 @@ model = 'rf' # the name of the model to train the data
 pca = PCA()
 # Define a Standard Scaler to normalize inputs
 scaler = RobustScaler()
+scaler_MinMax = MinMaxScaler
 # defining the estimators
 knn = KNeighborsClassifier()
 rf = RandomForestClassifier()
@@ -169,24 +170,39 @@ Pipelines = {
             'gb__n_estimators': [15]
         }
     },
-    'svc_pca':{
-        'name':'svc_pca_',
+    'svc_RobustScaler_pca':{
+        'name':'svc_RobustScaler_pca',
         'steps': [('scaler',scaler),('pca',pca),('svc',svm)],
         'params':{
-            'pca__n_components': [25], 
-            'svc__C': [1], 
-            'svc__gamma': [0.01], 
+            'pca__n_components': [10, 20, 30, 40], 
+            'svc__C': [1, 10, 100], 
+            'svc__gamma': [0.001, 0.01, 0.1, 01], 
             'svc__kernel': ['rbf']
         }
         
     },
-    'svc':{
-        'name':'svc_',
-        'steps': [('scaler',scaler),('svc',svm)],
+    'svc_MinMaxScaler_pca':{
+        'name':'svc_MinMaxScaler_pca',
+        'steps': [('scaler',scaler_MinMax),('pca',pca),('svc',svm)],
         'params':{
-            'svc__C': [1],
-            'svc__gamma': [1], 
+            'pca__n_components': [10, 20, 30, 40],
+            'svc__C': [1, 10, 100],
+            'svc__gamma': [0.001, 0.01, 0.1, 01], 
             'svc__kernel': ['rbf']
+        }
+    },
+    'mlp_RobustScaler_pca':{
+        'name':'mlp_RobustScaler_pca',
+        'steps': [('scaler',scaler),('pca',pca), ('mlp',mlp)],
+        'params':{
+            'pca__n_components': [10, 20, 30, 40],
+            'mlp__hidden_layer_sizes': [(120,60),(200,50,300,40), (300,10,200,40)],
+            'mlp__activation': ['tanh', 'relu'],
+            'mlp__max_iter': [200],
+            'mlp__momentum': [0.9, 0.93, 0.96],
+            'mlp__solver': ['sgd', 'adam'],
+            'mlp__alpha': [0.0001],
+            'mlp__learning_rate': ['constant','adaptive']
         }
     },
 }
